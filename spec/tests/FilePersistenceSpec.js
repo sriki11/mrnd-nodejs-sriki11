@@ -9,7 +9,7 @@ describe("FilePersistence Test Suite", function(){
 
 	//var request = require('request');
 	var request = require('C:/Program Files/nodejs/node_modules/npm/node_modules/request')
-	var base_url = "http://mycontactsvc.com:3000";
+	var base_url = "http://localhost:3000";
 	var contacts_url = base_url + "/contacts";
 	var fs = require('fs');
 
@@ -23,22 +23,24 @@ describe("FilePersistence Test Suite", function(){
 			contact.lastName = "peri";
 			contact.phone = "23002300";
 
-			console.log(JSON.stringify(contact));
+			//console.log(JSON.stringify(contact));
 		    
 		    request.post({url: contacts_url,
 		    			  body: contact,
 		    			  json: true
 		    			}, 
 		    		    function(error, response, body){
-
+		    		        console.log('in post');
+		    		        console.log(response.statusCode);
 							expect(response.statusCode).toBe(200);
 							console.log(body);
 							idCreated = body;
 							done();
 					    });
+		    
 		});
-
 		it("should persist contact",function(done){
+		    console.log('fetching');
 
 			var fileName = getContactFileName(idCreated);
 
@@ -48,6 +50,7 @@ describe("FilePersistence Test Suite", function(){
 			done();
 
 		});
+      
 		it("should update contact",function(done){
 
 			var updatedContact = new Object();
@@ -76,14 +79,33 @@ describe("FilePersistence Test Suite", function(){
 	describe("post and get message to contact", function(){
 
 		it("should post message to contact", function(done){
-			//TODO: Write your test case here.
+		    //todo: write your test case here.
+		    var message = 'hello';
+		    var id=0;
+		    request.post({
+		        url: contacts_url+'/'+id+'/'+message
+		    },
+		    		    function (error, response, body) {
+		    		        console.log(response.statuscode);
+		    		        expect(response.statuscode).tobe(200);
+		    		        console.log(body);
+		    		        expect(response.body).tobe('hello');
+		    		        done();
+		    		    });
 			done();
 
 		});
 
 		it("should get message for contact", function(done){
 			//TODO: Write your test case here.
-			done();
+		    var id = 0;
+		    var num = 0;
+		    request.get({ url: contacts_url + '/' + 'ask' + id + '/' + num }, function (error, response, body) {
+		        expect(response.statuscode).toBe(200);
+		        expect(response.body).toBe('hello');
+		    });
+
+		    done();
 
 		});
 
